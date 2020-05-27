@@ -1,0 +1,47 @@
+version: 3
+services:
+  gitlab:
+    image: 'localhost:8082/gitlab/gitlab-ce'
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.andy.liu'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.andy.liu'
+    ports:
+      - '80:80'
+    volumes:
+      - '/data/gitlab/config:/etc/gitlab'
+      - '/data/gitlab/logs:/var/log/gitlab'
+      - '/data/gitlab/data:/var/opt/gitlab'
+
+  jenkins:
+    image: localhost:8082/jenkins
+    container_name: jenkins
+    user: root
+    restart: always
+    hostname: 'jenkins.andy.liu'
+    links:
+      - gitlab
+      - nexus
+    depends_on:
+      - gitlab
+      - nexus
+    ports:
+      - '8080:8080'
+      - '50000:50000'
+    volumes:
+      - /data/jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /usr/lib/x86_64-linux-gnu/libltdl.so.7:/usr/lib/x86_64-linux-gnu/libltdl.so.7
+
+  nexus:
+    image: localhost:8082/sonatype/nexus3
+    container_name: nexus3
+    restart: always
+    ports:
+      - '8081:8081'
+      - '8082:8082'
+    volumes:
+      - /data/nexus:/nexus-data
