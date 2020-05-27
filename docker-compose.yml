@@ -37,7 +37,7 @@ services:
       - /usr/lib/x86_64-linux-gnu/libltdl.so.7:/usr/lib/x86_64-linux-gnu/libltdl.so.7
 
   nexus:
-    image: localhost:8082/sonatype/nexus3
+    image: sonatype/nexus3
     container_name: nexus3
     restart: always
     ports:
